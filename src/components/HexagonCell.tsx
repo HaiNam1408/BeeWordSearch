@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
 import type { TileData, CellData } from '../App';
 
-export function HexagonTile({ tile, inGrid }: { tile: TileData | CellData, inGrid?: boolean }) {
+export function HexagonTile({ tile, inGrid, duration }: { tile: TileData | CellData, inGrid?: boolean, duration?: number }) {
   const isSpecial = tile.type === 'gift' || tile.type === 'boom' || tile.content.includes('Kozocom');
   const isDisabled = 'isDisabled' in tile && tile.isDisabled;
+
+  const defaultDuration = inGrid ? 1.2 : 0.8;
+  const animDuration = duration || (tile.content === 'Kozocom' ? 1.8 : defaultDuration);
 
   return (
     <motion.div
@@ -14,13 +17,13 @@ export function HexagonTile({ tile, inGrid }: { tile: TileData | CellData, inGri
       `}
       initial={inGrid ? { rotateY: 180, scale: 0.8 } : false}
       animate={{ rotateY: 0, scale: 1 }}
-      transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+      transition={{ type: "spring", bounce: 0.15, duration: animDuration }}
       style={{
         transformStyle: "preserve-3d"
       }}
     >
       {/* Front Face (The Revealed Content) */}
-      <div 
+      <div
         className="absolute inset-0 hex-clip flex items-center justify-center p-1"
         style={{
           backfaceVisibility: "hidden",
@@ -49,7 +52,7 @@ export function HexagonTile({ tile, inGrid }: { tile: TileData | CellData, inGri
       </div>
 
       {/* Back Face (The Golden Cover) */}
-      <div 
+      <div
         className="absolute inset-0 hex-clip bg-gradient-to-br from-[var(--color-kozo-gold)] to-[#B38F2B] flex items-center justify-center"
         style={{
           backfaceVisibility: "hidden",
@@ -60,7 +63,7 @@ export function HexagonTile({ tile, inGrid }: { tile: TileData | CellData, inGri
         <div className="absolute inset-1 hex-clip border border-white/30 shadow-[inset_0_0_15px_rgba(255,255,255,0.4)]"></div>
         <div className="absolute inset-2 hex-clip border border-black/5"></div>
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="opacity-40 drop-shadow-sm">
-          <path d="M12 2L2 7L2 17L12 22L22 17L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinejoin="round"/>
+          <path d="M12 2L2 7L2 17L12 22L22 17L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinejoin="round" />
         </svg>
       </div>
     </motion.div>

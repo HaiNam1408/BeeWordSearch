@@ -12,7 +12,7 @@ export function HexagonGrid({ cells, onCellClick, flippingCellId }: HexagonGridP
   const ROWS = 5;
 
   return (
-    <div className="flex flex-col items-center justify-center py-4 relative">
+    <div className="flex flex-col items-center justify-center py-4 relative -translate-y-1/5">
       {Array.from({ length: ROWS }).map((_, rowIndex) => {
         const rowCells = cells.filter(c => c.row === rowIndex).sort((a, b) => a.col - b.col);
 
@@ -23,7 +23,7 @@ export function HexagonGrid({ cells, onCellClick, flippingCellId }: HexagonGridP
             key={rowIndex}
             className="flex justify-center relative z-10"
             style={{
-              marginTop: rowIndex === 0 ? 0 : '-20px', // Exact interlock calculation
+              marginTop: rowIndex === 0 ? 0 : '-24px',
             }}
           >
             {rowCells.map(cell => (

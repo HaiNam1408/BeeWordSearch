@@ -18,6 +18,14 @@ export function Header({ isMuted, toggleMute, turnsLeft, maxTurns = 4 }: HeaderP
           <span className="text-gray-300">M</span>
         </div>
       </div>
+
+      {/* Centered Game Title */}
+      <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none">
+        <h1 className="text-xl sm:text-2xl font-black tracking-[0.2em] uppercase text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+          ONG TÌM <span className="text-[var(--color-kozo-gold)]">CHỮ</span>
+        </h1>
+        <div className="h-0.5 w-12 bg-gradient-to-r from-transparent via-[var(--color-kozo-gold)] to-transparent opacity-60 mt-1"></div>
+      </div>
       <div className="flex items-center gap-4 sm:gap-6">
         <div className="glass-premium px-5 py-2.5 rounded-full flex items-center gap-3 text-white border-[var(--color-kozo-gold)]/20 shadow-[0_0_15px_rgba(212,175,55,0.1)]">
           <span className="text-xs uppercase tracking-widest text-[#94A3B8] font-bold mt-0.5 hidden sm:block">Lượt chơi</span>

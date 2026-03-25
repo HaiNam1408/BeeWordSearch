@@ -65,6 +65,7 @@ function App() {
   const [activeGiftTile, setActiveGiftTile] = useState<TileData | null>(null);
   const [loseType, setLoseType] = useState<'boom' | 'outOfTurns' | null>(null);
   const [flippingCellId, setFlippingCellId] = useState<string | null>(null);
+  const [winningTiles, setWinningTiles] = useState<TileData[]>([]);
 
   const hasWonRef = useRef(false);
 
@@ -80,6 +81,7 @@ function App() {
     setActiveGiftTile(null);
     setLoseType(null);
     setFlippingCellId(null);
+    setWinningTiles([]);
     hasWonRef.current = false;
   }, []);
 
@@ -92,9 +94,21 @@ function App() {
   useEffect(() => {
     const extractedWords = collectedTiles.filter(t => !t.isDisabled).map(t => t.content);
 
-    if (extractedWords.includes('Kozocom') ||
-      (extractedWords.includes('Ko') && extractedWords.includes('Zo') && extractedWords.includes('Com'))) {
+    const winningWords = ['Ko', 'Zo', 'Com'];
+    const hasKozocom = extractedWords.includes('Kozocom');
+    const hasAllParts = winningWords.every(word => extractedWords.includes(word));
+
+    if (hasKozocom || hasAllParts) {
       if (!hasWonRef.current) {
+        if (hasKozocom) {
+          const kt = collectedTiles.find(t => t.content === 'Kozocom' && !t.isDisabled);
+          if (kt) setWinningTiles([kt]);
+        } else {
+          const parts = winningWords.map(word =>
+            collectedTiles.find(t => t.content === word && !t.isDisabled)
+          ).filter(Boolean) as TileData[];
+          setWinningTiles(parts);
+        }
         setGameStatus('won');
         audio.playWin();
         hasWonRef.current = true;
@@ -140,15 +154,20 @@ function App() {
           if (isLastTurn) {
             const prevExtracted = prev.filter(t => !t.isDisabled).map(t => t.content);
             const extractedWords = [...prevExtracted, newTile.content];
-            const isWin = extractedWords.includes('Kozocom') ||
-              (extractedWords.includes('Ko') && extractedWords.includes('Zo') && extractedWords.includes('Com'));
+            const isKozocomWin = newTile.content === 'Kozocom';
+            const isWordWin = extractedWords.includes('Ko') && extractedWords.includes('Zo') && extractedWords.includes('Com');
+            const isWin = isKozocomWin || isWordWin;
 
-            if (!isWin) {
+            if (isWin) {
+              if (isKozocomWin) setWinningTiles([newTile]);
+            } else {
               setTimeout(() => {
                 setLoseType('outOfTurns');
                 setGameStatus(status => status === 'playing' ? 'lost' : status);
               }, 400);
             }
+          } else if (cell.content === 'Kozocom') {
+            setWinningTiles([newTile]);
           }
         }
         return newTiles;
@@ -210,6 +229,7 @@ function App() {
       <WinModal
         isOpen={gameStatus === 'won'}
         onRestart={initGame}
+        winningTiles={winningTiles}
       />
     </Layout>
   );
