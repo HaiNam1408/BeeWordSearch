@@ -11,7 +11,7 @@ export function CollectionTray({ tiles, maxSlots }: CollectionTrayProps) {
   const slots = Array.from({ length: maxSlots });
 
   return (
-    <div className="fixed bottom-32 w-full flex justify-center z-50 pointer-events-none px-4">
+    <div className="fixed bottom-24 w-full flex justify-center z-50 pointer-events-none px-4">
       {/* Dock Background */}
       <div className="glass-premium px-6 sm:px-8 py-5 rounded-[2.5rem] flex items-center gap-4 sm:gap-6 min-w-[380px] sm:min-w-[480px] justify-center pointer-events-auto">
         {slots.map((_, i) => {

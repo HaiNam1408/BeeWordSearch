@@ -71,6 +71,18 @@ const MESSAGES = {
         "Đúng là có làm có may mới thắng được! Chiến thắng này là dành cho bạn!"
       ]
     },
+    gift: {
+      titles: ["QUÀ XỊN VỀ TAY 🎁", "HÚP TRỌN LỘC LÁ 💝", "NHÂN PHẨM ĐỈNH CAO 🎁", "CHÚC MỪNG PHÚ HỘ 💝", "LỘC TRỜI CHO 🎁", "GIÀU SANG PHÚ QUÝ 💝", "TỔ ĐỘ THẬT SỰ 🎁"],
+      bodies: [
+        "Quá dữ luôn bạn ơi! Một món quà xịn xò đã chính thức thuộc về bạn. Chúc mừng nhé!",
+        "Húp trọn quả lộc này thì còn gì bằng? Bạn đúng là cao thủ săn quà của Kozocom!",
+        "Nhân phẩm thế này thì ai chơi lại? Quà về tay, tiền đầy túi, vui quá xá quà xa!",
+        "Chúc mừng tân phú hộ! Món quà này là phần thưởng xứng đáng cho sự quyết đoán của bạn.",
+        "Lộc trời đã định, không nhận không được! Chúc mừng bạn đã húp trọn món quà giá trị.",
+        "Giàu sang phú quý là đây chứ đâu! Cầm quà trên tay mà lòng vui phơi phới đúng không?",
+        "Tổ nghề độ bạn thật sự rồi! Một phát ăn ngay, quà xịn về đội. Quá tuyệt vời!"
+      ]
+    },
     button: "QUÁ GHÊ GỚM!"
   }
 };
@@ -270,6 +282,117 @@ export function WinModal({ isOpen, onRestart, winningTiles }: { isOpen: boolean,
                   <button
                     onClick={onRestart}
                     className="w-full bg-linear-to-r from-kozo-gold to-[#FDE047] hover:brightness-110 text-kozo-navy font-black py-4 px-6 rounded-xl shadow-[0_0_20px_rgba(212,175,55,0.3)] transform active:scale-95 transition-all text-lg tracking-widest border border-white/40"
+                  >
+                    {MESSAGES.win.button}
+                  </button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </Fragment>
+      )}
+    </AnimatePresence>
+  );
+}
+
+export function GiftWinModal({ isOpen, onRestart, giftTile }: { isOpen: boolean, onRestart: () => void, giftTile: TileData | null }) {
+  const [msgIdx, setMsgIdx] = useState(0);
+  const [showContent, setShowContent] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setMsgIdx(Math.floor(Math.random() * 7));
+      setShowContent(false);
+
+      const timer = setTimeout(() => setShowContent(true), 800);
+
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 200, colors: ['#FF69B4', '#DA70D6', '#FFFFFF'] };
+      const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+      const interval: any = setInterval(function () {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(interval);
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+      }, 250);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
+    }
+  }, [isOpen]);
+
+  const config = MESSAGES.win.gift;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <Fragment>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-kozo-dark/80 backdrop-blur-md z-100"
+          />
+          <div className="fixed inset-0 flex items-center justify-center z-101 pointer-events-none p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="rounded-3xl p-8 sm:p-10 max-w-md w-full pointer-events-auto text-center relative overflow-hidden text-white border-t border-white/20 shadow-2xl"
+            >
+              <motion.div
+                animate={{ opacity: showContent ? 1 : 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 z-0 glass-modal border-white/20"
+              />
+              <motion.div
+                animate={{ opacity: showContent ? 1 : 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-white/5 to-transparent pointer-events-none z-0"
+              />
+
+              <div className="relative z-10">
+                <motion.h2
+                  animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : -10 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-2xl sm:text-3xl font-black mb-6 tracking-wider text-kozo-gold drop-shadow-md"
+                >
+                  {config.titles[msgIdx]}
+                </motion.h2>
+
+                <div className="mb-12 flex justify-center relative min-h-[160px] sm:min-h-[180px] items-center">
+                  {giftTile ? (
+                    <div className="relative flex items-center justify-center">
+                      <motion.div
+                        animate={{ opacity: showContent ? 1 : 0, scale: showContent ? 1 : 0.5 }}
+                        transition={{ duration: 1 }}
+                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 scale-150"
+                      >
+                        <div className="radiant-sun" style={{ filter: 'hue-rotate(300deg)' }} />
+                        <div className="light-rays" style={{ filter: 'hue-rotate(300deg)' }} />
+                      </motion.div>
+
+                      <div className="relative z-20 sun-shine hex-clip w-32 h-36 sm:w-40 sm:h-44">
+                        <HexagonTile tile={giftTile} duration={0.8} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-6xl animate-bounce drop-shadow-[0_0_25px_rgba(255,215,0,0.5)]">🎁</div>
+                  )}
+                </div>
+
+                <motion.div animate={{ opacity: showContent ? 1 : 0, y: showContent ? 0 : 10 }} transition={{ duration: 0.5 }}>
+                  <p className="text-xl font-bold mb-8 text-gray-200">
+                    {config.bodies[msgIdx]}
+                  </p>
+                  <button
+                    onClick={onRestart}
+                    className="w-full bg-linear-to-r from-pink-500 to-purple-600 hover:brightness-110 text-white font-black py-4 px-6 rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.3)] transform active:scale-95 transition-all text-lg tracking-widest border border-white/40"
                   >
                     {MESSAGES.win.button}
                   </button>
